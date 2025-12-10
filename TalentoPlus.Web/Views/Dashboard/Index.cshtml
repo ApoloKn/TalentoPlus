@@ -1,0 +1,89 @@
+@model IEnumerable<TalentoPlus.Application.DTOs.EmployeeDto>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Dashboard</h1>
+    
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Total Employees: @ViewData["TotalEmployees"]</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">Total Departments: @ViewData["TotalDepartments"]</div>
+            </div>
+        </div>
+        <!-- Add more cards -->
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    AI Assistant
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" id="aiQuery" class="form-control" placeholder="Ask about employees...">
+                        <button class="btn btn-primary" onclick="askAi()">Ask</button>
+                    </div>
+                    <div id="aiResponse" class="mt-3 alert alert-info" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Employees
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@item.FirstName</td>
+                            <td>@item.LastName</td>
+                            <td>@item.Email</td>
+                            <td>@item.Position</td>
+                            <td>@item.DepartmentName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function askAi() {
+            const query = document.getElementById('aiQuery').value;
+            const responseDiv = document.getElementById('aiResponse');
+            
+            const res = await fetch('/Dashboard/AskAi', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(query)
+            });
+            const data = await res.json();
+            
+            responseDiv.style.display = 'block';
+            responseDiv.innerText = data.answer;
+        }
+    </script>
+}
